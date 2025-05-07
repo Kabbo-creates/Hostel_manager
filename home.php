@@ -98,10 +98,20 @@ $user_type = $row['user_type'];
 
         <?php if ($user_type === "Owner"): ?>
             <button class="action-btn" onclick="window.location.href='add_property.php'">Add Property</button>
-            <button class="action-btn" onclick="window.location.href='view_properties.php'">View Posted Properties</button>
+            <button class="action-btn" onclick="window.location.href='view_posted_properties.php'">View Posted Properties</button>
+            <button class="action-btn" onclick="window.location.href='rental_requests.php'">View Rental Requests</button>
+            <button class="action-btn" onclick="window.location.href='maids_view.php'">View Maids</button>
         <?php elseif ($user_type === "Bachelor"): ?>
-            <button class="action-btn" onclick="window.location.href='properties_ad.php'">Properties Ad</button>
+            <button class="action-btn" onclick="window.location.href='properties_ad.php'">Browse Properties</button>
             <button class="action-btn" onclick="window.location.href='post_vacancy.php'">Post Vacancy</button>
+            <button class="action-btn" onclick="window.location.href='posted_ad.php'">Posted Ad</button> 
+            <button class="action-btn" onclick="window.location.href='view_vacancies.php'">View Vacancies</button>
+            <button class="action-btn" onclick="window.location.href='maids_view.php'">View Maids</button>
+            <button class="action-btn" onclick="window.location.href='meal_dashboard.php'">Meal Management</button>
+        <?php elseif ($user_type === "Admin"): ?>
+            <button class="action-btn" onclick="window.location.href='view_properties.php'">View Properties</button>
+            <button class="action-btn" onclick="window.location.href='view_vacancies.php'">View Vacancies</button>
+            <button class="action-btn" onclick="window.location.href='maids_admin.php'">Manage Maids</button>
         <?php endif; ?>
     </div>
 

@@ -2,33 +2,35 @@
 session_start();
 require 'db.php';
 
-if (!isset($_SESSION['username'])) {
-    header("Location: index.html");
-    exit();
-}
+// if (!isset($_SESSION['username']) || $_SESSION['user_type'] !== 'Owner') {
+//     header("Location: index.html");
+//     exit();
+// }
 
 $username = $_SESSION['username'];
 
-// Fetch all properties
-$stmt = $conn->prepare("SELECT * FROM properties");
+// Fetch properties posted by the owner
+$stmt = $conn->prepare("SELECT * FROM properties WHERE owner_username = ? ORDER BY created_at DESC");
+$stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $properties = $result->fetch_all(MYSQLI_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>All Posted Properties</title>
+    <title>Your Posted Properties</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #f1f8e9, #aed581);
+            background: linear-gradient(to right, #e8f5e9, #a5d6a7);
             padding: 20px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
             background: white;
             border-radius: 10px;
@@ -38,7 +40,7 @@ $properties = $result->fetch_all(MYSQLI_ASSOC);
 
         h2 {
             text-align: center;
-            color: #33691e;
+            color: #2e7d32;
         }
 
         table {
@@ -48,18 +50,18 @@ $properties = $result->fetch_all(MYSQLI_ASSOC);
         }
 
         th, td {
-            border: 1px solid #c5e1a5;
-            padding: 10px;
+            padding: 12px;
+            border: 1px solid #a5d6a7;
             text-align: left;
         }
 
         th {
-            background-color: #8bc34a;
+            background-color: #388e3c;
             color: white;
         }
 
         tr:nth-child(even) {
-            background-color: #f1f8e9;
+            background-color: #e8f5e9;
         }
 
         .back-link {
@@ -78,7 +80,7 @@ $properties = $result->fetch_all(MYSQLI_ASSOC);
 
 <div class="container">
     <div class="back-link"><a href="home.php">← Back to Home</a></div>
-    <h2>All Posted Properties</h2>
+    <h2>Your Posted Properties</h2>
 
     <?php if (count($properties) > 0): ?>
         <table>
@@ -88,32 +90,30 @@ $properties = $result->fetch_all(MYSQLI_ASSOC);
                     <th>Monthly Rent</th>
                     <th>Rooms</th>
                     <th>Features</th>
-                    <th>Status</th>
-                    <th>Owner</th>
-                    <th>Action</th>
+                    <th>Rent Status</th>
+                    <th>Posted On</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($properties as $property): ?>
+                <?php foreach ($properties as $prop): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($property['location']); ?></td>
-                        <td><?php echo htmlspecialchars($property['rent']); ?></td>
-                        <td><?php echo htmlspecialchars($property['rooms']); ?></td>
-                        <td><?php echo htmlspecialchars($property['features']); ?></td>
-                        <td><?php echo htmlspecialchars($property['status']); ?></td>
-                        <td><?php echo htmlspecialchars($property['owner_username']); ?></td>
+                        <td><?= htmlspecialchars($prop['location']); ?></td>
+                        <td><?= htmlspecialchars($prop['rent']); ?></td>
+                        <td><?= htmlspecialchars($prop['rooms']); ?></td>
+                        <td><?= htmlspecialchars($prop['features']); ?></td>
+                        <td><?= htmlspecialchars($prop['status']); ?></td>
+                        <td><?= date("d M Y", strtotime($prop['created_at'])); ?></td>
                         <td>
-                            <form method="post" action="rent_now.php">
-                                <input type="hidden" name="property_id" value="<?php echo htmlspecialchars($property['id']); ?>">
-                                <button type="submit">Rent Now!</button>
-                            </form>
+                            <a href="edit_property.php?id=<?= $prop['id'] ?>">Edit</a> |
+                            <a href="delete_property.php?id=<?= $prop['id'] ?>" onclick="return confirm('Are you sure you want to delete this property?')">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>No properties found in the database.</p>
+        <p>No properties posted yet.</p>
     <?php endif; ?>
 </div>
 

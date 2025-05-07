@@ -2,10 +2,10 @@
 session_start();
 require 'db.php';
 
-if (!isset($_SESSION['username']) || $_SESSION['user_type'] !== 'Bachelor') {
-    header("Location: add_property.php");
-    exit();
-}
+// if (!isset($_SESSION['username']) || $_SESSION['user_type'] !== 'Bachelor') {
+//     header("Location: add_property.php");
+//     exit();
+// }
 
 $username = $_SESSION['username'];
 $successMsg = '';
